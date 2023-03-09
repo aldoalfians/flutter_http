@@ -18,4 +18,13 @@ class HttpProvider with ChangeNotifier {
     _data = json.decode(res.body);
     notifyListeners();
   }
+
+  connectGetAPI(String id) async {
+    Uri url = Uri.parse("https://reqres.in/api/users/$id");
+
+    var res = await http.get(url);
+
+    _data = (json.decode(res.body))["data"];
+    notifyListeners();
+  }
 }
