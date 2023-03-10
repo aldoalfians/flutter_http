@@ -10,8 +10,10 @@ class HttpProvider with ChangeNotifier {
 
   int get jumlahData => _data.length;
 
+  late Uri url;
+
   connectAPI(String name, String job) async {
-    Uri url = Uri.parse("https://reqres.in/api/users");
+    url = Uri.parse("https://reqres.in/api/users");
 
     var res = await http.post(url, body: {"name": name, "job": job});
 
@@ -19,12 +21,40 @@ class HttpProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  connectGetAPI(String id) async {
-    Uri url = Uri.parse("https://reqres.in/api/users/$id");
+  connectGetAPI(String id, BuildContext context) async {
+    url = Uri.parse("https://reqres.in/api/users/$id");
 
     var res = await http.get(url);
 
-    _data = (json.decode(res.body))["data"];
-    notifyListeners();
+    if (res.statusCode == 200) {
+      _data = (json.decode(res.body))["data"];
+      notifyListeners();
+      // ignore: use_build_context_synchronously
+      handlingStatusCode(context, "BERHASIL GET DATA");
+    } else {
+      // ignore: use_build_context_synchronously
+      handlingStatusCode(context, "ERROR ${res.statusCode}");
+    }
+  }
+
+  void deleteData(BuildContext context) async {
+    var hasilResponse = await http.delete(url);
+
+    print(hasilResponse.statusCode);
+
+    if (hasilResponse.statusCode == 204) {
+      _data = {};
+      notifyListeners();
+      handlingStatusCode(context, "No content !");
+    }
+  }
+
+  handlingStatusCode(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(milliseconds: 700),
+      ),
+    );
   }
 }

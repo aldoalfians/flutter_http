@@ -74,8 +74,10 @@ class HomeProvider extends StatelessWidget {
             SizedBox(height: 100),
             OutlinedButton(
               onPressed: () {
-                dataProvider
-                    .connectGetAPI((1 + Random().nextInt(10)).toString());
+                dataProvider.connectGetAPI(
+                  (1 + Random().nextInt(10)).toString(),
+                  context,
+                );
               },
               child: Text(
                 "GET DATA",
@@ -86,6 +88,12 @@ class HomeProvider extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          dataProvider.deleteData(context);
+        },
+        child: Icon(Icons.delete),
       ),
     );
   }
